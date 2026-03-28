@@ -1,0 +1,17 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="32" fill="url(#grad)" />
+  <!-- Speaker -->
+  <path d="M35 45H50L70 25V103L50 83H35V45Z" fill="white" />
+  <!-- Sound Waves (Voice) -->
+  <path d="M82 45C88 51 91 57 91 64C91 71 88 77 82 83" stroke="white" stroke-width="6" stroke-linecap="round" stroke-opacity="0.9" />
+  <path d="M95 32C104 42 108 52 108 64C108 76 104 86 95 96" stroke="white" stroke-width="6" stroke-linecap="round" stroke-opacity="0.6" />
+  <!-- Sparkle (AI/Summarizer) -->
+  <path d="M90 15L93 23L101 26L93 29L90 37L87 29L79 26L87 23L90 15Z" fill="white" />
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4285F4" />
+      <stop offset="0.5" stop-color="#9B72CB" />
+      <stop offset="1" stop-color="#D96570" />
+    </linearGradient>
+  </defs>
+</svg>
