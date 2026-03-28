@@ -52,21 +52,14 @@ summarizeBtn.addEventListener('click', async () => {
     return;
   }
 
-  updateStatus('Extracting page text...', true);
-  summaryEl.innerHTML = ''; // Clear empty state
-  summarizeBtn.disabled = true;
-  stopBtn.disabled = false;
-  toSettingsBtn.disabled = true;
-
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-    // Check if we can script on this tab
     if (tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
       throw new Error('Cannot summarize system pages.');
     }
 
-    statusEl.textContent = 'Extracting page text...';
+    updateStatus('Extracting page text...', true);
     const [{result}] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => document.body.innerText
@@ -77,13 +70,27 @@ summarizeBtn.addEventListener('click', async () => {
       throw new Error('No text content found on this page.');
     }
 
-    updateStatus('Connecting to Gemini 3.1 Flash Live...', true);
-    await startGeminiLive(key, pageText);
+    summaryEl.innerHTML = ''; 
+    summarizeBtn.disabled = true;
+    stopBtn.disabled = false;
+    toSettingsBtn.disabled = true;
+
+    if (session) {
+      console.log('Using existing session...');
+      updateStatus('Summarizing...', true);
+      session.sendRealtimeInput({ 
+        text: `Please summarize this web page content and read it aloud: \n\n${pageText}` 
+      });
+    } else {
+      updateStatus('Connecting to Gemini 3.1 Flash Live...', true);
+      await startGeminiLive(key, pageText);
+    }
   } catch (error) {
     console.error(error);
     updateStatus('Error: ' + error.message, false);
     summarizeBtn.disabled = false;
     stopBtn.disabled = true;
+    toSettingsBtn.disabled = false;
   }
 });
 
@@ -148,6 +155,8 @@ async function startGeminiLive(apiKey, text) {
         }
         if (response.serverContent?.turnComplete) {
            updateStatus('Summarization complete.', false);
+           summarizeBtn.disabled = false;
+           toSettingsBtn.disabled = false;
         }
       },
       onerror: (error) => {
