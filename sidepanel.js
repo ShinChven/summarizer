@@ -80,7 +80,7 @@ summarizeBtn.addEventListener('click', async () => {
     }
 
     if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
-      throw new Error('Cannot summarize this type of page (system or restricted).');
+      throw new Error(`Cannot summarize this type of page (system or restricted): ${tab.url || 'No URL found'}`);
     }
 
     updateStatus('Extracting page text...', true);
