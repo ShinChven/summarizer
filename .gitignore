@@ -48,8 +48,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-package-lock.json
-
 ### Node template
 # Logs
 logs
