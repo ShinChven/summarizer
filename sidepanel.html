@@ -50,8 +50,9 @@
     .gemini-logo {
       width: 28px;
       height: 28px;
-      background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
-      border-radius: 50%;
+      background-image: url('icon128.png');
+      background-size: cover;
+      border-radius: 6px;
       flex-shrink: 0;
     }
 
@@ -152,6 +153,21 @@
     .actions {
       display: flex;
       gap: 8px;
+    }
+
+    #languageSelect {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background-color: white;
+      outline: none;
+      cursor: pointer;
+    }
+
+    #languageSelect:focus {
+      border-color: var(--primary);
     }
 
     #summarizeBtn {
@@ -308,9 +324,25 @@
   
   <main id="mainView">
     <div class="actions">
+      <div class="select-wrapper" style="flex-grow: 1;">
+        <select id="languageSelect" title="Select summary language">
+          <option value="English" selected>English</option>
+          <option value="Chinese">Chinese (中文)</option>
+          <option value="Spanish">Spanish (Español)</option>
+          <option value="French">French (Français)</option>
+          <option value="German">German (Deutsch)</option>
+          <option value="Japanese">Japanese (日本語)</option>
+          <option value="Korean">Korean (한국어)</option>
+          <option value="Hindi">Hindi (हिन्दी)</option>
+          <option value="Portuguese">Portuguese (Português)</option>
+          <option value="Italian">Italian (Italiano)</option>
+          <option value="Arabic">Arabic (العربية)</option>
+          <option value="Russian">Russian (Русский)</option>
+        </select>
+      </div>
       <button id="summarizeBtn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        Summarize Page
+        Summarize
       </button>
       <button id="stopBtn" disabled title="Stop playback">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect></svg>
@@ -330,8 +362,9 @@
       </div>
       <div id="summary">
         <div class="empty-state">
+          <img src="icon128.png" style="width: 64px; height: 64px; opacity: 0.15; margin-bottom: 16px; filter: grayscale(1);">
           <p>No summary generated yet.</p>
-          <p style="font-size: 0.8rem; margin-top: 8px;">Click "Summarize Page" to start.</p>
+          <p style="font-size: 0.8rem; margin-top: 8px;">Click "Summarize" to start.</p>
         </div>
       </div>
     </div>
@@ -346,7 +379,7 @@
     <div class="config-card">
       <div class="config-header">Gemini API Configuration</div>
       <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
-        Your API key is stored locally on your device.
+        Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary); font-weight: 500;">Google AI Studio</a>.
       </p>
       <div class="input-group">
         <input type="password" id="apiKey" placeholder="Enter API Key">

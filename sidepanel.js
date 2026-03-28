@@ -15,6 +15,7 @@ const toSettingsBtn = document.getElementById('toSettings');
 const toMainBtn = document.getElementById('toMain');
 const mainView = document.getElementById('mainView');
 const settingsView = document.getElementById('settingsView');
+const languageSelect = document.getElementById('languageSelect');
 
 // View Switching
 toSettingsBtn.addEventListener('click', () => {
@@ -29,18 +30,37 @@ toMainBtn.addEventListener('click', () => {
   toSettingsBtn.style.visibility = 'visible';
 });
 
-// Load API key from storage
-chrome.storage.local.get(['geminiApiKey'], (result) => {
+// Load settings from storage
+chrome.storage.local.get(['geminiApiKey', 'selectedLanguage'], (result) => {
   if (result.geminiApiKey) {
     apiKeyInput.value = result.geminiApiKey;
   }
+  if (result.selectedLanguage) {
+    languageSelect.value = result.selectedLanguage;
+  }
+});
+
+// Save language preference when changed
+languageSelect.addEventListener('change', () => {
+  chrome.storage.local.set({ selectedLanguage: languageSelect.value });
 });
 
 saveBtn.addEventListener('click', () => {
   const key = apiKeyInput.value.trim();
   if (key) {
     chrome.storage.local.set({ geminiApiKey: key }, () => {
-      statusEl.textContent = 'API Key saved.';
+      const originalText = saveBtn.textContent;
+      const originalBg = saveBtn.style.backgroundColor;
+      
+      saveBtn.textContent = 'Saved!';
+      saveBtn.style.backgroundColor = '#10b981'; // Success green
+      saveBtn.disabled = true;
+
+      setTimeout(() => {
+        saveBtn.textContent = originalText;
+        saveBtn.style.backgroundColor = originalBg;
+        saveBtn.disabled = false;
+      }, 2000);
     });
   }
 });
@@ -55,8 +75,12 @@ summarizeBtn.addEventListener('click', async () => {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-    if (tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
-      throw new Error('Cannot summarize system pages.');
+    if (!tab) {
+      throw new Error('No active tab found.');
+    }
+
+    if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
+      throw new Error('Cannot summarize this type of page (system or restricted).');
     }
 
     updateStatus('Extracting page text...', true);
@@ -78,8 +102,9 @@ summarizeBtn.addEventListener('click', async () => {
     if (session) {
       console.log('Using existing session...');
       updateStatus('Summarizing...', true);
+      const language = languageSelect.value;
       session.sendRealtimeInput({ 
-        text: `Please summarize this web page content and read it aloud: \n\n${pageText}` 
+        text: `Please summarize this web page content in ${language} and read it aloud: \n\n${pageText}` 
       });
     } else {
       updateStatus('Connecting to Gemini 3.1 Flash Live...', true);
@@ -176,8 +201,9 @@ async function startGeminiLive(apiKey, text) {
 
   // Send the initial request after the session is successfully connected
   console.log('Sending initial request...');
+  const language = languageSelect.value;
   session.sendRealtimeInput({ 
-    text: `Please summarize this web page content and read it aloud: \n\n${text}` 
+    text: `Please summarize this web page content in ${language} and read it aloud: \n\n${text}` 
   });
 }
 
